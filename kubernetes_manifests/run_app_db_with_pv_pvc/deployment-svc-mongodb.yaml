@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: mongodb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      name: mongodb-pod
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb-container
+          image: mongo
+
+          # Mounting pvc to specific file or directory same docker Bind Mount concept
+          volumeMounts:
+            - name: mongo-vol
+              mountPath: /data/db
+
+      # Attaching pvc to use it            
+      volumes:
+        - name: mongo-vol
+          persistentVolumeClaim:
+            claimName: host-pvc
+          
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: mongodb
+  ports:
+    - name: http
+      port: 27017
+      targetPort: 27017

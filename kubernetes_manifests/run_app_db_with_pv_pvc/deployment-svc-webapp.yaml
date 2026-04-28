@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: webapp-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      name: webapp-pod
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp-container
+          image: liteshz/webapp-demo-nodejs-mongodb:v1
+          env:
+            #- name: MONGO_URL
+            #value: "mongodb://mongodb-svc:27017/testdb"
+            - name: MONGO_URL  #ENV Variable this to be accessed in webapp pod/container
+              valueFrom:
+                configMapKeyRef:
+                  name: mongdb-configmap  #ConfigMap Name
+                  key: MONGO_URL
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: webapp
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
