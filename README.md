@@ -10,3 +10,7 @@ This repo contains files related to demo_webapp_nodejs_mongo_db
  a. docker images
  b. docker container ls -a
 
+
+# Notes: 
+1. Use latest tag when playing with docker images & containers
+2. Use v1 tag when running webapp & mongo in same container using kubernetes deployment & svc. 
